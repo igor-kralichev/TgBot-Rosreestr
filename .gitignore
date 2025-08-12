@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Logs
+*.log
+
+# PyCharm
+.idea/
+
+# Byte-compiled
+*.so
+
+# Mac / Linux / Windows system files
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+pytest_cache/
+.mypy_cache/
+.pytest_cache/
+
+# VSCode
+.vscode/
+
+
+# Local database / temp files
+*.sqlite3
+*.db
+*.bak
+
+# Generated files
+*.mo
+*.pot
