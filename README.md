@@ -66,4 +66,8 @@
     ```bash
     docker-compose down
     ```
+## Пример ответа бота
+
+<img width="506" height="773" alt="image" src="https://github.com/user-attachments/assets/8e27d71e-cc11-4c39-a6cd-0047d34a0b4a" />
+
 
