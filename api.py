@@ -71,10 +71,11 @@ async def get_cadastre(request: Request, cad_num: str) -> CadastreResponse:
         area_gkn=options.get("specified_area"),
         category_type=props.get("categoryName"),
         util_code=None,
-        util_by_doc=None,
+        util_by_doc=options.get("permitted_use_established_by_document"),
         cad_cost=options.get("cost_value"),
         date_create=options.get("cost_determination_date"),
-        date_update=props.get("systemInfo", {}).get("updated")
+        date_update=props.get("systemInfo", {}).get("updated"),
+        coordinates=feature.get('geometry', {}).get('coordinates', [[]])[0]  # Добавляем координаты
     )
 
     logger.info(f"Успешный запрос для {cad_num}")

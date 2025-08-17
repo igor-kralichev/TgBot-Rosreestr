@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, Field, field_validator
 import re
 from datetime import datetime
@@ -37,6 +37,7 @@ class CadastreResponse(BaseModel):
     cad_cost: Optional[str] = Field(None, description="Кадастровая стоимость (форматированная)")
     date_create: Optional[str] = Field(None, description="Дата создания записи")
     date_update: Optional[str] = Field(None, description="Дата обновления")
+    coordinates: Optional[List[List[float]]] = Field(None, description="Координаты полигона участка")
 
     @field_validator("area_gkn", mode="before")
     @classmethod
