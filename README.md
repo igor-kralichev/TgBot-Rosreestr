@@ -67,6 +67,7 @@
     ```
 ## Пример ответа бота
 
-<img width="506" height="773" alt="image" src="https://github.com/user-attachments/assets/8e27d71e-cc11-4c39-a6cd-0047d34a0b4a" />
+<img width="496" height="850" alt="image" src="https://github.com/user-attachments/assets/3f53b8af-e6ae-4b4b-9815-4141dfa3cd42" />
+
 
 
