@@ -4,9 +4,10 @@ import re
 from datetime import datetime
 from num2words import num2words
 
+# Регулярное выражение для валидации кадастрового номера
 CADASTRE_REGEX = re.compile(r'^\d{2}:\d{2}:\d{6,7}:\d+$')
 
-
+# Функция форматирования денежной суммы в рублях и копейках с текстовым описанием
 def format_money_rus(amount: float) -> str:
     rub = int(amount)
     kop = int(round((amount - rub) * 100))
@@ -15,7 +16,7 @@ def format_money_rus(amount: float) -> str:
     kop_words = num2words(kop, lang='ru')
     return f"{rub_formatted} руб. {kop:02d} коп. ({rub_words} рублей {kop_words} копеек)"
 
-
+# Модель запроса для валидации кадастрового номера
 class CadastreRequest(BaseModel):
     cad_num: str = Field(..., description="Кадастровый номер в формате XX:XX:XXXXXX:XX")
 
@@ -26,7 +27,7 @@ class CadastreRequest(BaseModel):
             raise ValueError("Неверный формат кадастрового номера. Пример: 77:03:0001001:1")
         return v
 
-
+# Модель ответа с данными объекта недвижимости
 class CadastreResponse(BaseModel):
     cn: Optional[str] = Field(None, description="Кадастровый номер")
     address: Optional[str] = Field(None, description="Адрес")
@@ -39,6 +40,7 @@ class CadastreResponse(BaseModel):
     date_update: Optional[str] = Field(None, description="Дата обновления")
     coordinates: Optional[List[List[float]]] = Field(None, description="Координаты полигона участка")
 
+    # Валидатор для форматирования площади, добавляет единицу измерения м² или преобразует число
     @field_validator("area_gkn", mode="before")
     @classmethod
     def format_area(cls, v):
@@ -52,6 +54,7 @@ class CadastreResponse(BaseModel):
         except Exception:
             return v_str + " м²"
 
+    # Валидатор для форматирования кадастровой стоимости, преобразует в рубли и копейки с текстовым описанием
     @field_validator("cad_cost", mode="before")
     @classmethod
     def format_cad_cost(cls, v):
@@ -62,6 +65,7 @@ class CadastreResponse(BaseModel):
         except Exception:
             return str(v)
 
+    # Валидатор для форматирования дат создания и обновления в формат ДД-ММ-ГГГГ
     @field_validator("date_create", "date_update", mode="before")
     @classmethod
     def format_dates(cls, v):

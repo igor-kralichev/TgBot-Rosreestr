@@ -6,6 +6,7 @@ from slowapi.errors import RateLimitExceeded
 from models import CadastreRequest, CadastreResponse
 import httpx
 
+# Настройка логирования и инициализация приложения
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["30/minute"])
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-
+# Асинхронная функция для получения данных из внешнего API НСПД
 async def fetch_cadastre_object(cad_num: str) -> dict:
     url = "https://nspd.gov.ru/api/geoportal/v2/search/geoportal"
     params = {
@@ -45,12 +46,12 @@ async def fetch_cadastre_object(cad_num: str) -> dict:
             logger.error(f"Unexpected error: {exc}")
             raise HTTPException(status_code=500, detail="Внутренняя ошибка сервера.")
 
-
+# Эндпоинт для получения данных по кадастровому номеру
 @app.get("/cadastre/{cad_num}", response_model=CadastreResponse, summary="Получить данные по кадастровому номеру")
 @limiter.limit("20/minute")
 async def get_cadastre(request: Request, cad_num: str) -> CadastreResponse:
     try:
-        CadastreRequest(cad_num=cad_num)  # валидация
+        CadastreRequest(cad_num=cad_num)
     except ValueError as e:
         logger.warning(f"Неверный формат: {cad_num}")
         raise HTTPException(status_code=400, detail=str(e))
@@ -75,13 +76,13 @@ async def get_cadastre(request: Request, cad_num: str) -> CadastreResponse:
         cad_cost=options.get("cost_value"),
         date_create=options.get("cost_determination_date"),
         date_update=props.get("systemInfo", {}).get("updated"),
-        coordinates=feature.get('geometry', {}).get('coordinates', [[]])[0]  # Добавляем координаты
+        coordinates=feature.get('geometry', {}).get('coordinates', [[]])[0]
     )
 
     logger.info(f"Успешный запрос для {cad_num}")
     return response
 
-
+# Точка входа для запуска приложения
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

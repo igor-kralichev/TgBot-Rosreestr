@@ -8,6 +8,7 @@ from aiogram.enums import ChatAction
 import aiohttp
 from models import CadastreResponse
 
+# Настройка логирования, инициализация бота и диспетчера
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -20,17 +21,17 @@ if not BOT_TOKEN:
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-
+# Обработчик команды /start
 @dp.message(CommandStart())
 async def start_handler(message: types.Message) -> None:
     await message.reply("Привет! Отправь кадастровый номер в формате XX:XX:XXXXXX:XX (например, 77:03:0001001:1).")
 
-
+# Обработчик команды /stop
 @dp.message(Command("stop"))
 async def stop_handler(message: types.Message) -> None:
     await message.reply("Бот остановлен. Для возобновления работы отправьте /start")
 
-
+# Обработчик входящих сообщений с кадастровым номером
 @dp.message()
 async def message_handler(message: types.Message) -> None:
     cad_num = message.text.strip()
@@ -58,7 +59,7 @@ async def message_handler(message: types.Message) -> None:
                 data = await response.json()
                 info = CadastreResponse(**data)
 
-            # Формируем ссылку на карту НСПД
+            # Формирование ссылки на карту НСПД и ответа
             x_coords = [point[0] for point in info.coordinates]
             y_coords = [point[1] for point in info.coordinates]
             center_x = sum(x_coords) / len(x_coords)
@@ -96,11 +97,10 @@ async def message_handler(message: types.Message) -> None:
         await bot.delete_message(chat_id=message.chat.id, message_id=loading_message.message_id)
         await message.reply("Произошла неизвестная ошибка.")
 
-
+# Точка входа для запуска бота
 async def main() -> None:
     logger.info("Бот запущен.")
     await dp.start_polling(bot)
-
 
 if __name__ == '__main__':
     asyncio.run(main())
